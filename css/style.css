@@ -106,30 +106,6 @@ p { margin: 0 0 16px; color: var(--text-main); }
   font-size: 1.125rem;
 }
 
-.btn-block {
-  display: block;
-  width: 100%;
-  text-align: center;
-}
-
-/* ===== Sticky CTA (mobile) ===== */
-.sticky-cta {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
-  z-index: 1000;
-}
-
-@media (max-width: 768px) {
-  .sticky-cta { display: block; }
-  body { padding-bottom: 72px; }
-}
-
 /* ===== Hero ===== */
 .hero {
   position: relative;
@@ -273,17 +249,18 @@ p { margin: 0 0 16px; color: var(--text-main); }
 }
 
 .check-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  position: relative;
+  padding-left: 28px;
   font-size: 1.1rem;
   color: var(--text-main);
 }
 
-.check-icon {
+.check-list .check-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
   color: var(--green);
   font-weight: 700;
-  flex-shrink: 0;
 }
 
 /* ===== Testimonials ===== */
@@ -415,8 +392,14 @@ p { margin: 0 0 16px; color: var(--text-main); }
 }
 
 .guarantee-icon {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+}
+
+.guarantee-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 /* ===== FAQ ===== */
@@ -560,4 +543,74 @@ p { margin: 0 0 16px; color: var(--text-main); }
   .hero-title { font-size: 2.1rem; }
 
   .section { padding: 64px 0; }
+}
+
+/* ===== Correcoes especificas de mobile ===== */
+@media (max-width: 768px) {
+  /* Icones Lottie dos cards de modulos: altura fixa e centralizados,
+     sem esticar o aspect ratio original de cada animacao */
+  .card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 80px;
+  }
+
+  .card-icon .card-lottie {
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+  }
+
+  /* Titulos de secao nao devem passar de 2rem no mobile */
+  .section-title.title-accent {
+    font-size: 2rem;
+  }
+
+  /* Card de modulo: texto centralizado no mobile */
+  .card {
+    text-align: center;
+  }
+
+  /* Secoes split (Dor e Solucao): layout em coluna centralizada.
+     .split-text vira display:contents para que titulo, texto, botao
+     e a imagem (irma em .split-media) concorram como itens do mesmo
+     flex column, podendo ser reordenados livremente via order. */
+  .split,
+  .split-reverse {
+    align-items: center;
+    text-align: center;
+  }
+
+  .split-text {
+    display: contents;
+  }
+
+  .split-text h2 { order: 1; }
+
+  .split-text p {
+    order: 2;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .split-media {
+    order: 3;
+    width: 100%;
+  }
+
+  .illust {
+    margin: 0 auto;
+  }
+
+  .split-text .btn {
+    order: 4;
+    width: 90%;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
 }
