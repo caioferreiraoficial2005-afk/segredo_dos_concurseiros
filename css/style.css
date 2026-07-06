@@ -1,16 +1,18 @@
 /* ===== Variaveis ===== */
 :root {
-  --bg-white: #FFFFFF;
-  --bg-gray: #F7F8FA;
-  --bg-dark: #0F2044;
+  --bg-white: #000000;
+  --bg-gray: #060607;
+  --bg-card: #17181D;
+  --bg-dark: #000000;
   --green: #00C853;
   --green-hover: #00A846;
-  --blue: #1565C0;
-  --text-main: #1A1A2E;
-  --text-secondary: #5F6368;
+  --blue: #5F9BEA;
+  --text-main: #FFFFFF;
+  --text-secondary: #A9AFBD;
   --text-light: #C9D2E3;
+  --border-subtle: rgba(255, 255, 255, 0.12);
   --radius: 16px;
-  --shadow: 0 8px 24px rgba(15, 32, 68, 0.08);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   --font-title: 'Poppins', sans-serif;
   --font-body: 'Inter', sans-serif;
 }
@@ -21,6 +23,7 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
+  overflow-x: hidden;
   font-family: var(--font-body);
   color: var(--text-main);
   background: var(--bg-white);
@@ -44,6 +47,17 @@ p { margin: 0 0 16px; color: var(--text-main); }
 
 .section {
   padding: 96px 0;
+}
+
+/* Grade discreta de fundo em todas as secoes, exceto o hero (que ja tem
+   video de fundo proprio). O padrao fica atras do conteudo por ser um
+   background-image, sem precisar de z-index extra nos filhos. */
+.section:not(.hero) {
+  position: relative;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 .bg-white { background: var(--bg-white); }
@@ -74,8 +88,6 @@ p { margin: 0 0 16px; color: var(--text-main); }
   color: var(--blue);
   font-weight: 600;
 }
-
-.bg-dark .highlight { color: #7EB6F2; }
 
 /* ===== Botoes ===== */
 .btn {
@@ -113,6 +125,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
   min-height: 90vh;
   display: flex;
   align-items: center;
+  justify-content: center;
   background: var(--bg-dark);
   padding: 64px 0;
 }
@@ -133,6 +146,20 @@ p { margin: 0 0 16px; color: var(--text-main); }
   z-index: 1;
 }
 
+/* Transicao suave entre o hero e a secao seguinte: desvanece o video
+   para a cor de fundo do restante da pagina, em vez de um corte seco. */
+.hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 200px;
+  background: linear-gradient(to bottom, transparent, var(--bg-dark));
+  z-index: 2;
+  pointer-events: none;
+}
+
 .hero-inner {
   max-width: 640px;
 }
@@ -144,6 +171,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
 .hero-content {
   position: relative;
   z-index: 2;
+  text-align: center;
 }
 
 .tag {
@@ -184,6 +212,62 @@ p { margin: 0 0 16px; color: var(--text-main); }
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 12px rgba(0, 0, 0, 0.7);
 }
 
+/* ===== Liquid glass (borda de vidro fosco, usado no hero e em cards) =====
+   Mantem a cor de fundo original do elemento; adiciona so o blur, a borda
+   em degrade (::before, via mask-composite) e o brilho interno (::after).
+   O brilho interno fica num pseudo-elemento proprio para nao disputar a
+   propriedade box-shadow com a sombra que o proprio componente ja usa
+   (ex: .card, .price-box tem "box-shadow: var(--shadow)"). */
+.liquid-glass {
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.18) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.18) 80%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Camada de brilho: usa o background do PROPRIO pseudo-elemento (nao do
+   componente), entao nao entra em disputa de cascata com o "background:
+   var(--bg-card)" que cards/price-box ja declaram em outro lugar do
+   arquivo -- so a borda em ::before dependeria de ordem, o background
+   de um pseudo-elemento nunca depende. */
+.liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.04) 35%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  z-index: 1;
+}
+
 /* ===== Split sections ===== */
 .split {
   display: flex;
@@ -204,8 +288,49 @@ p { margin: 0 0 16px; color: var(--text-main); }
 .split-text p { font-size: 1.05rem; }
 .split-text .btn { margin-top: 8px; }
 
-.split-media { display: flex; justify-content: center; }
+.split-media { position: relative; display: flex; justify-content: center; }
 .split-media .lottie-box { max-width: 360px; height: 360px; }
+.split-lottie { width: 100%; height: 100%; display: block; }
+
+/* Luz de destaque atras do video/imagem: pseudo-elemento no container
+   (nao no .media-frame, que tem overflow:hidden e cortaria o brilho).
+   Precisa ser bem maior que o proprio frame, senao fica escondida atras
+   dele (o frame e opaco e cobre o centro, so a borda do brilho aparece). */
+.split-media::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 96%;
+  max-width: 480px;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(0, 200, 83, 0.75) 0%, rgba(0, 200, 83, 0.3) 45%, rgba(0, 200, 83, 0) 70%);
+  filter: blur(55px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.split-media > * {
+  position: relative;
+  z-index: 1;
+}
+
+.split-media .media-frame {
+  width: 100%;
+  max-width: 420px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.split-media .media-frame video,
+.split-media .media-frame img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
 
 /* ===== Cards grid (modulos) ===== */
 .cards-grid {
@@ -215,7 +340,8 @@ p { margin: 0 0 16px; color: var(--text-main); }
 }
 
 .card {
-  background: var(--bg-white);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 32px 24px;
@@ -271,7 +397,8 @@ p { margin: 0 0 16px; color: var(--text-main); }
 }
 
 .testimonial-card {
-  background: var(--bg-gray);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
   padding: 28px;
 }
@@ -304,7 +431,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
 .price-box {
   max-width: 480px;
   margin: 0 auto;
-  background: var(--bg-white);
+  background: var(--bg-card);
   border: 2px solid var(--green);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -328,7 +455,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
   flex-direction: column;
   gap: 10px;
   text-align: left;
-  border-bottom: 1px solid #E1E5EC;
+  border-bottom: 1px solid var(--border-subtle);
   padding-bottom: 24px;
 }
 
@@ -412,7 +539,8 @@ p { margin: 0 0 16px; color: var(--text-main); }
 }
 
 .faq-item {
-  background: var(--bg-white);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 20px 24px;
   box-shadow: var(--shadow);
@@ -440,90 +568,40 @@ p { margin: 0 0 16px; color: var(--text-main); }
   margin: 16px 0 0;
 }
 
-/* ===== Reveal animations ===== */
+/* ===== Reveal animations =====
+   Curva "ease-out-expo" (mais impacto no inicio, chega suave no fim) em
+   vez de "ease" padrao -- da uma sensacao mais premium/cinematografica
+   de entrada do que um fade linear comum. */
 .reveal {
   opacity: 0;
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-.reveal-up { transform: translateY(24px); }
-.reveal-left { transform: translateX(-32px); }
-.reveal-right { transform: translateX(32px); }
-.reveal-hero { transform: translateY(16px); }
+.reveal-up { transform: translateY(36px) scale(0.97); }
+.reveal-left { transform: translateX(-48px) scale(0.97); }
+.reveal-right { transform: translateX(48px) scale(0.97); }
+.reveal-hero { transform: translateY(20px); }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translate(0, 0);
+  transform: translate(0, 0) scale(1);
 }
+
+/* Efeito cascata: filhos diretos entram em sequencia em vez de todos de
+   uma vez. Cobre ate 6 itens (cards-grid tem 6, faq-list tem 4). */
+.stagger > *:nth-child(1) { transition-delay: 0s; }
+.stagger > *:nth-child(2) { transition-delay: 0.08s; }
+.stagger > *:nth-child(3) { transition-delay: 0.16s; }
+.stagger > *:nth-child(4) { transition-delay: 0.24s; }
+.stagger > *:nth-child(5) { transition-delay: 0.32s; }
+.stagger > *:nth-child(6) { transition-delay: 0.4s; }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
     transform: none;
     transition: none;
-  }
-}
-
-/* ===== Ilustracoes SVG ===== */
-.illust {
-  width: 100%;
-  max-width: 320px;
-  height: auto;
-}
-
-/* Dor: dia pulsando em vermelho, urgencia */
-.pulse-ring {
-  transform-origin: center;
-  animation: pulseRing 1.8s ease-out infinite;
-}
-
-@keyframes pulseRing {
-  0% { transform: scale(0.7); opacity: 1; }
-  100% { transform: scale(1.6); opacity: 0; }
-}
-
-.day-flip { animation: dayFlip 1.8s ease-in-out infinite; }
-
-@keyframes dayFlip {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-/* Solucao: progresso do caminho e marcos surgindo */
-.path-progress {
-  stroke-dasharray: 180;
-  stroke-dashoffset: 180;
-  animation: pathDraw 2.4s ease forwards;
-}
-
-@keyframes pathDraw {
-  to { stroke-dashoffset: 0; }
-}
-
-.illust-solucao .milestone {
-  opacity: 0;
-  transform: scale(0.5);
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: milestonePop 0.5s ease forwards;
-}
-
-.illust-solucao .milestone-1 { animation-delay: 0.2s; }
-.illust-solucao .milestone-2 { animation-delay: 0.9s; }
-.illust-solucao .milestone-3 { animation-delay: 1.6s; }
-.illust-solucao .milestone-4 { animation-delay: 2.3s; }
-
-@keyframes milestonePop {
-  to { opacity: 1; transform: scale(1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pulse-ring, .day-flip,
-  .path-progress, .illust-solucao .milestone {
-    animation: none;
-    opacity: 1;
-    transform: none;
-    stroke-dashoffset: 0;
   }
 }
 
@@ -601,7 +679,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
     width: 100%;
   }
 
-  .illust {
+  .lottie-box {
     margin: 0 auto;
   }
 
@@ -612,5 +690,17 @@ p { margin: 0 0 16px; color: var(--text-main); }
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+  }
+
+  /* Secoes split sem <p>/.btn (avatar e depoimentos): lista e card
+     de depoimento ocupam o mesmo slot de ordem que o paragrafo. */
+  .split-text .check-list,
+  .split-text .testimonials-grid {
+    order: 2;
+    width: 100%;
+  }
+
+  .media-frame {
+    margin: 0 auto;
   }
 }
