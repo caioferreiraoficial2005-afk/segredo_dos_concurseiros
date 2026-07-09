@@ -21,7 +21,10 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
 
 body {
   margin: 0;
@@ -667,7 +670,15 @@ p { margin: 0 0 16px; color: var(--text-main); }
   .split,
   .split-reverse {
     flex-direction: column;
-    gap: 40px;
+    gap: 20px;
+  }
+
+  /* Em telas estreitas 160% de largura estoura o viewport (o circulo
+     passa dos limites da pagina, nao so da secao), o que faz o mobile
+     tratar isso como overflow horizontal real e "brigar" com o zoom
+     durante o scroll. Reduzido para nao ultrapassar a largura da tela. */
+  .split-media::before {
+    width: 110%;
   }
 
   .cards-grid,
@@ -739,6 +750,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
   .split-media {
     order: 3;
     width: 100%;
+    margin-top: 32px;
   }
 
   .lottie-box {
