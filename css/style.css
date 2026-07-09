@@ -28,7 +28,6 @@ body {
   overflow-x: hidden;
   font-family: var(--font-body);
   color: var(--text-main);
-  padding-top: 60px;
   background-color: var(--bg-white);
   line-height: 1.55;
 }
@@ -719,13 +718,6 @@ p { margin: 0 0 16px; color: var(--text-main); }
     transform: none;
     transition: none;
   }
-}
-
-/* Abaixo de ~480px o texto + os 4 blocos do cronometro nao cabem mais
-   numa linha so e quebram em duas -- aumenta o respiro no topo pra
-   compensar a barra mais alta e nao cobrir o inicio do hero. */
-@media (max-width: 480px) {
-  body { padding-top: 94px; }
 }
 
 /* ===== Responsivo ===== */
