@@ -73,13 +73,8 @@ p { margin: 0 0 16px; color: var(--text-main); }
   padding: 96px 0;
 }
 
-/* overflow:hidden contem elementos decorativos absolutos (como o brilho
-   do portal atras dos videos) dentro dos limites da propria secao --
-   sem isso, um elemento grande o suficiente vaza pra secao vizinha e
-   cria um bloco/linha visivel na fronteira entre as duas. */
 .section:not(.hero) {
   position: relative;
-  overflow: hidden;
 }
 
 /* Sem cor solida: deixa o fundo cosmico do body aparecer por tras,
@@ -385,8 +380,11 @@ p { margin: 0 0 16px; color: var(--text-main); }
    (nao no .media-frame, que tem overflow:hidden e cortaria o portal).
    Precisa ser bem maior que o proprio frame, senao fica escondido atras
    dele (o frame e opaco e cobre o centro, so a borda do portal aparece).
-   O overflow:hidden da .section (pai) contem esse elemento dentro dos
-   limites da secao, entao ele nunca vaza pra secao vizinha. */
+   Pode ultrapassar os limites da secao livremente (sem overflow:hidden
+   no pai) -- o border-radius:50% garante que, mesmo vazando pra secao
+   vizinha, a borda que aparece e sempre a curva do circulo, nunca os
+   cantos retos do quadrado do gif (que era o que causava o bloco/linha
+   visivel na fronteira entre secoes antes). */
 .split-media::before {
   content: '';
   position: absolute;
@@ -395,6 +393,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
   width: 160%;
   max-width: 720px;
   aspect-ratio: 1;
+  border-radius: 50%;
   transform: translate(-50%, -50%);
   background-image: url('../assets/videos/Rick%20And%20Morty%20Emoji%20Sticker%20by%20Adult%20Swim.gif');
   background-position: center;
