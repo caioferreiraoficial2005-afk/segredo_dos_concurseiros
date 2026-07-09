@@ -1,16 +1,18 @@
 /* ===== Variaveis ===== */
 :root {
-  --bg-white: #000000;
-  --bg-gray: #060607;
-  --bg-card: #17181D;
-  --bg-dark: #000000;
-  --green: #00C853;
-  --green-hover: #00A846;
-  --blue: #5F9BEA;
+  --bg-white: #00182E;
+  --bg-gray: #001527;
+  --bg-card: #FFFFFF;
+  --bg-dark: #00182E;
+  --green: #ACEC00;
+  --green-hover: #97CE00;
+  --blue: #013FF6;
   --text-main: #FFFFFF;
-  --text-secondary: #A9AFBD;
+  --text-secondary: #C9D6E3;
   --text-light: #C9D2E3;
+  --card-text-secondary: #5B6B80;
   --border-subtle: rgba(255, 255, 255, 0.12);
+  --section-tint: rgba(0, 24, 46, 0.5);
   --radius: 16px;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   --font-title: 'Poppins', sans-serif;
@@ -21,12 +23,23 @@
 
 html { scroll-behavior: smooth; }
 
+/* Unico fundo da pagina inteira (exceto o hero, que ja tem video +
+   overlay opacos cobrindo 100% da area e por isso esconde esse fundo
+   automaticamente). Mora no body (nao em cada .section) com
+   attachment:fixed, entao fica parado atras do conteudo -- continuo de
+   uma secao pra outra, sem repetir nem criar costura nas fronteiras. */
 body {
   margin: 0;
   overflow-x: hidden;
   font-family: var(--font-body);
   color: var(--text-main);
-  background: var(--bg-white);
+  padding-top: 60px;
+  background-color: var(--bg-white);
+  background-image: url('../assets/images/FUNDO_COSMICO.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   line-height: 1.55;
 }
 
@@ -49,20 +62,15 @@ p { margin: 0 0 16px; color: var(--text-main); }
   padding: 96px 0;
 }
 
-/* Grade discreta de fundo em todas as secoes, exceto o hero (que ja tem
-   video de fundo proprio). O padrao fica atras do conteudo por ser um
-   background-image, sem precisar de z-index extra nos filhos. */
 .section:not(.hero) {
   position: relative;
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
 }
 
-.bg-white { background: var(--bg-white); }
-.bg-gray { background: var(--bg-gray); }
-.bg-dark { background: var(--bg-dark); }
+/* Sem cor solida: deixa o fundo cosmico do body aparecer por tras,
+   com uma leve tinta escura por cima para manter o texto legivel. */
+.bg-white { background: var(--section-tint); }
+.bg-gray { background: var(--section-tint); }
+.bg-dark { background: var(--section-tint); }
 
 .text-white { color: #FFFFFF; }
 .text-light { color: var(--text-light); }
@@ -85,7 +93,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
 
 /* Palavras-chave em destaque nas legendas */
 .highlight {
-  color: var(--blue);
+  color: var(--green);
   font-weight: 600;
 }
 
@@ -105,7 +113,8 @@ p { margin: 0 0 16px; color: var(--text-main); }
 
 .btn-primary {
   background: var(--green);
-  color: #FFFFFF;
+  color: var(--bg-dark);
+  font-weight: 700;
 }
 
 .btn-primary:hover {
@@ -146,22 +155,72 @@ p { margin: 0 0 16px; color: var(--text-main); }
   z-index: 1;
 }
 
-/* Transicao suave entre o hero e a secao seguinte: desvanece o video
-   para a cor de fundo do restante da pagina, em vez de um corte seco. */
-.hero::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 200px;
-  background: linear-gradient(to bottom, transparent, var(--bg-dark));
-  z-index: 2;
-  pointer-events: none;
-}
-
 .hero-inner {
   max-width: 640px;
+}
+
+/* Barra do cronometro: fixa no topo da pagina inteira (nao so do hero),
+   por isso mora fora de .main no HTML -- se estivesse dentro de um
+   ancestral com overflow:hidden (como .hero), o navegador cortaria o
+   elemento fixed quando esse ancestral saisse da tela ao rolar. */
+.top-countdown {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 16px;
+  padding: 8px 16px;
+  background: var(--bg-dark);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.top-countdown-text {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #FFFFFF;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.top-countdown-text .highlight {
+  color: var(--green);
+}
+
+.countdown {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.countdown-unit {
+  background: var(--bg-card);
+  border-radius: 6px;
+  padding: 3px 8px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.countdown-value {
+  display: block;
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--blue);
+  line-height: 1.3;
+}
+
+.countdown-label {
+  display: block;
+  font-size: 0.55rem;
+  color: var(--card-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* .reveal.is-visible aplica transform, o que cria um novo contexto de
@@ -182,7 +241,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--green);
-  background: rgba(0, 200, 83, 0.12);
+  background: rgba(172, 236, 0, 0.12);
   padding: 8px 16px;
   border-radius: 100px;
   margin-bottom: 24px;
@@ -205,11 +264,24 @@ p { margin: 0 0 16px; color: var(--text-main); }
   margin-bottom: 32px;
 }
 
+/* Em telas de desktop o texto do hero migra para a esquerda (o video
+   tem mais espaco "vazio" nesse lado); no restante (tablet/mobile)
+   permanece centralizado, como definido acima. Uma margem extra
+   desloca o bloco mais pra dentro, longe do gutter do container. */
+@media (min-width: 901px) {
+  .hero-inner {
+    margin-left: 96px;
+    margin-right: auto;
+  }
+
+  .hero-content {
+    text-align: left;
+  }
+}
+
 .hero-content .btn {
   position: relative;
   z-index: 2;
-  color: #FFFFFF;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 12px rgba(0, 0, 0, 0.7);
 }
 
 /* ===== Liquid glass (borda de vidro fosco, usado no hero e em cards) =====
@@ -292,25 +364,6 @@ p { margin: 0 0 16px; color: var(--text-main); }
 .split-media .lottie-box { max-width: 360px; height: 360px; }
 .split-lottie { width: 100%; height: 100%; display: block; }
 
-/* Luz de destaque atras do video/imagem: pseudo-elemento no container
-   (nao no .media-frame, que tem overflow:hidden e cortaria o brilho).
-   Precisa ser bem maior que o proprio frame, senao fica escondida atras
-   dele (o frame e opaco e cobre o centro, so a borda do brilho aparece). */
-.split-media::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 96%;
-  max-width: 480px;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(0, 200, 83, 0.75) 0%, rgba(0, 200, 83, 0.3) 45%, rgba(0, 200, 83, 0) 70%);
-  filter: blur(55px);
-  z-index: 0;
-  pointer-events: none;
-}
-
 .split-media > * {
   position: relative;
   z-index: 1;
@@ -359,9 +412,50 @@ p { margin: 0 0 16px; color: var(--text-main); }
 .card h3 {
   font-size: 1.15rem;
   margin-bottom: 8px;
+  color: var(--bg-dark);
 }
 
-.card p { margin: 0; font-size: 0.95rem; }
+.card p { margin: 0; font-size: 0.95rem; color: var(--bg-dark); }
+
+.card .highlight { color: var(--blue); }
+
+/* ===== Carrossel de modulos =====
+   Track duplicado (2x as mesmas imagens) para permitir loop infinito: o
+   offset e mantido sempre no intervalo (-halfWidth, 0] via JS, entao a
+   transicao entre o fim do 1o conjunto e o inicio da copia e imperceptivel. */
+.modules-carousel {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  cursor: grab;
+  margin-top: 16px;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.modules-carousel.dragging {
+  cursor: grabbing;
+}
+
+.modules-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  padding: 0 24px;
+  will-change: transform;
+}
+
+.modules-track img {
+  width: 180px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
 
 /* ===== Check list (avatar) ===== */
 .check-list {
@@ -415,15 +509,17 @@ p { margin: 0 0 16px; color: var(--text-main); }
 
 .testimonial-text {
   font-size: 1rem;
-  color: var(--text-main);
+  color: var(--bg-dark);
   margin-bottom: 12px;
 }
+
+.testimonial-text .highlight { color: var(--blue); }
 
 .testimonial-author {
   font-family: var(--font-title);
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--green);
+  color: var(--blue);
   margin: 0;
 }
 
@@ -442,7 +538,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
   font-family: var(--font-title);
   font-weight: 700;
   font-size: 1rem;
-  color: var(--text-main);
+  color: var(--bg-dark);
   text-align: left;
   margin-bottom: 16px;
 }
@@ -464,18 +560,18 @@ p { margin: 0 0 16px; color: var(--text-main); }
   align-items: center;
   gap: 10px;
   font-size: 0.95rem;
-  color: var(--text-main);
+  color: var(--bg-dark);
 }
 
 .price-includes-list .check-icon {
-  color: var(--green);
+  color: var(--blue);
   font-weight: 700;
 }
 
 .price-old {
   display: block;
   font-size: 1.1rem;
-  color: var(--text-secondary);
+  color: var(--card-text-secondary);
   text-decoration: line-through;
   margin-bottom: 4px;
 }
@@ -485,37 +581,42 @@ p { margin: 0 0 16px; color: var(--text-main); }
   font-family: var(--font-title);
   font-size: 3rem;
   font-weight: 800;
-  color: var(--green);
+  color: var(--blue);
   margin-bottom: 8px;
 }
 
 .price-urgency {
-  color: var(--text-secondary);
+  color: var(--card-text-secondary);
   margin-bottom: 32px;
-}
-
-.trust-icons {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  margin-top: 24px;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
 }
 
 .guarantee-note {
   margin-top: 16px;
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--card-text-secondary);
 }
 
 /* ===== Garantia ===== */
 .guarantee-card {
   max-width: 560px;
   margin: 0 auto;
+  background: var(--bg-card);
   border: 2px solid var(--green);
   border-radius: var(--radius);
+  box-shadow: var(--shadow);
   padding: 40px;
+}
+
+.guarantee-card h2.title-accent {
+  color: var(--blue);
+}
+
+.guarantee-card p {
+  color: var(--bg-dark);
+}
+
+.guarantee-card .highlight {
+  color: var(--blue);
 }
 
 .guarantee-icon {
@@ -549,6 +650,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
 .faq-item summary {
   font-family: var(--font-title);
   font-weight: 600;
+  color: var(--bg-dark);
   cursor: pointer;
   list-style: none;
 }
@@ -558,7 +660,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
 .faq-item summary::after {
   content: '+';
   float: right;
-  color: var(--green);
+  color: var(--blue);
   font-weight: 700;
 }
 
@@ -566,6 +668,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
 
 .faq-item p {
   margin: 16px 0 0;
+  color: var(--bg-dark);
 }
 
 /* ===== Reveal animations =====
@@ -605,6 +708,13 @@ p { margin: 0 0 16px; color: var(--text-main); }
   }
 }
 
+/* Abaixo de ~480px o texto + os 4 blocos do cronometro nao cabem mais
+   numa linha so e quebram em duas -- aumenta o respiro no topo pra
+   compensar a barra mais alta e nao cobrir o inicio do hero. */
+@media (max-width: 480px) {
+  body { padding-top: 94px; }
+}
+
 /* ===== Responsivo ===== */
 @media (max-width: 900px) {
   .split,
@@ -621,6 +731,11 @@ p { margin: 0 0 16px; color: var(--text-main); }
   .hero-title { font-size: 2.1rem; }
 
   .section { padding: 64px 0; }
+
+  /* attachment:fixed tem historico de travar/piscar no Safari iOS;
+     no mobile a imagem so acompanha o scroll normal, continua unica
+     e sem repetir, so deixa de ficar "parada" atras do conteudo. */
+  body { background-attachment: scroll; }
 }
 
 /* ===== Correcoes especificas de mobile ===== */
