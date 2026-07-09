@@ -1,9 +1,9 @@
 /* ===== Variaveis ===== */
 :root {
-  --bg-white: #00182E;
-  --bg-gray: #001527;
+  --bg-white: #000000;
+  --bg-gray: #000000;
   --bg-card: #FFFFFF;
-  --bg-dark: #00182E;
+  --bg-dark: #000000;
   --green: #ACEC00;
   --green-hover: #97CE00;
   --blue: #013FF6;
@@ -12,7 +12,7 @@
   --text-light: #C9D2E3;
   --card-text-secondary: #5B6B80;
   --border-subtle: rgba(255, 255, 255, 0.12);
-  --section-tint: rgba(0, 24, 46, 0.5);
+  --section-tint: #000000;
   --radius: 16px;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   --font-title: 'Poppins', sans-serif;
@@ -32,28 +32,6 @@ body {
   line-height: 1.55;
 }
 
-/* Unico fundo da pagina inteira (exceto o hero, que ja tem video +
-   overlay opacos cobrindo 100% da area e por isso esconde esse fundo
-   automaticamente). Um pseudo-elemento position:fixed do tamanho do
-   viewport -- em vez do background ficar direto no body -- porque
-   com attachment:fixed no proprio body a "area de posicionamento" do
-   background vira a altura inteira do documento em alguns motores
-   mobile (a pagina toda tem milhares de pixels), forcando o cover a
-   esticar a imagem varias vezes e perder nitidez. Um elemento fixed
-   sempre usa o viewport como referencia, entao o cover nunca precisa
-   ampliar alem do tamanho da tela, em qualquer plataforma. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-image: url('../assets/images/FUNDO_COSMICO.jpg');
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  pointer-events: none;
-}
-
 h1, h2, h3 {
   font-family: var(--font-title);
   font-weight: 700;
@@ -71,14 +49,9 @@ p { margin: 0 0 16px; color: var(--text-main); }
 
 .section {
   padding: 96px 0;
-}
-
-.section:not(.hero) {
   position: relative;
 }
 
-/* Sem cor solida: deixa o fundo cosmico do body aparecer por tras,
-   com uma leve tinta escura por cima para manter o texto legivel. */
 .bg-white { background: var(--section-tint); }
 .bg-gray { background: var(--section-tint); }
 .bg-dark { background: var(--section-tint); }
@@ -140,35 +113,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
 
 /* ===== Hero ===== */
 .hero {
-  position: relative;
-  overflow: hidden;
-  min-height: 90vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: var(--bg-dark);
-  padding: 64px 0;
-}
-
-.hero-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  z-index: 0;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 1;
-}
-
-.hero-inner {
-  max-width: 640px;
 }
 
 /* Barra do cronometro: fixa no topo da pagina inteira (nao so do hero),
@@ -235,19 +180,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
   letter-spacing: 0.04em;
 }
 
-/* .reveal.is-visible aplica transform, o que cria um novo contexto de
-   empilhamento em .hero-content; sem z-index proprio aqui, esse contexto
-   ficava abaixo do .hero-overlay (z-index 1) e o overlay pintava por cima
-   de todo o conteudo do hero. */
-.hero-content {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-}
-
 .tag {
-  position: relative;
-  z-index: 2;
   display: inline-block;
   font-family: var(--font-title);
   font-size: 0.85rem;
@@ -260,40 +193,14 @@ p { margin: 0 0 16px; color: var(--text-main); }
 }
 
 .hero-title {
-  position: relative;
-  z-index: 2;
   font-size: 2.75rem;
   color: #FFFFFF;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 12px rgba(0, 0, 0, 0.7);
 }
 
 .hero-subtitle {
-  position: relative;
-  z-index: 2;
   font-size: 1.15rem;
   color: #FFFFFF;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 12px rgba(0, 0, 0, 0.7);
   margin-bottom: 32px;
-}
-
-/* Em telas de desktop o texto do hero migra para a esquerda (o video
-   tem mais espaco "vazio" nesse lado); no restante (tablet/mobile)
-   permanece centralizado, como definido acima. Uma margem extra
-   desloca o bloco mais pra dentro, longe do gutter do container. */
-@media (min-width: 901px) {
-  .hero-inner {
-    margin-left: 96px;
-    margin-right: auto;
-  }
-
-  .hero-content {
-    text-align: left;
-  }
-}
-
-.hero-content .btn {
-  position: relative;
-  z-index: 2;
 }
 
 /* ===== Liquid glass (borda de vidro fosco, usado no hero e em cards) =====
@@ -353,6 +260,14 @@ p { margin: 0 0 16px; color: var(--text-main); }
 }
 
 /* ===== Split sections ===== */
+/* Secoes com .split-media (portal decorativo de ate 720px de diametro)
+   precisam de mais respiro vertical que as secoes comuns, senao o
+   circulo nao cabe dentro dos limites da propria secao e a secao
+   seguinte (opaca) acaba cobrindo/cortando parte do portal. */
+.section.section-portal {
+  padding: 180px 0;
+}
+
 .split {
   display: flex;
   flex-direction: row;
@@ -399,7 +314,6 @@ p { margin: 0 0 16px; color: var(--text-main); }
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.4;
   z-index: 0;
   pointer-events: none;
 }
@@ -457,7 +371,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
 
 .card p { margin: 0; font-size: 0.95rem; color: var(--bg-dark); }
 
-.card .highlight { color: var(--blue); }
+.card .highlight { color: var(--green); }
 
 /* ===== Carrossel de modulos =====
    Track duplicado (2x as mesmas imagens) para permitir loop infinito: o
@@ -765,14 +679,8 @@ p { margin: 0 0 16px; color: var(--text-main); }
 
   .section { padding: 64px 0; }
 
-  /* O video do hero foi filmado em formato desktop com os personagens
-     do lado direito do quadro. Em telas estreitas o corte automatico
-     do object-fit:cover fica centralizado e perde os personagens --
-     desloca o ponto de ancoragem pra direita do video (mostra mais do
-     lado direito da fonte), o que visualmente "puxa" o quadro pra
-     esquerda e enquadra os personagens. */
-  .hero-video {
-    object-position: 78% center;
+  .section.section-portal {
+    padding: 110px 0;
   }
 }
 
@@ -818,6 +726,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
     display: contents;
   }
 
+  .split-text h1,
   .split-text h2 { order: 1; }
 
   .split-text p {
