@@ -676,9 +676,17 @@ p { margin: 0 0 16px; color: var(--text-main); }
   /* Em telas estreitas 160% de largura estoura o viewport (o circulo
      passa dos limites da pagina, nao so da secao), o que faz o mobile
      tratar isso como overflow horizontal real e "brigar" com o zoom
-     durante o scroll. Reduzido para nao ultrapassar a largura da tela. */
+     durante o scroll. Largura reduzida para nao ultrapassar a tela.
+     Em compensacao vira uma oval mais alta (nao um circulo 1:1): as
+     imagens usadas (capas/mockups) sao bem mais altas que largas, entao
+     um circulo do tamanho da largura ficaria menor que a altura da
+     imagem e desapareceria inteiro atras da moldura. Com background-size
+     cover em vez de contain, o gif preenche essa oval em vez de flutuar
+     pequeno e centralizado dentro dela. */
   .split-media::before {
-    width: 110%;
+    width: 115%;
+    aspect-ratio: 1 / 1.7;
+    background-size: cover;
   }
 
   .cards-grid,
@@ -750,7 +758,7 @@ p { margin: 0 0 16px; color: var(--text-main); }
   .split-media {
     order: 3;
     width: 100%;
-    margin-top: 32px;
+    margin-top: 56px;
   }
 
   .lottie-box {
