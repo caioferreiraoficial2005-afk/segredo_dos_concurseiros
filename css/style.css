@@ -73,8 +73,13 @@ p { margin: 0 0 16px; color: var(--text-main); }
   padding: 96px 0;
 }
 
+/* overflow:hidden contem elementos decorativos absolutos (como o brilho
+   do portal atras dos videos) dentro dos limites da propria secao --
+   sem isso, um elemento grande o suficiente vaza pra secao vizinha e
+   cria um bloco/linha visivel na fronteira entre as duas. */
 .section:not(.hero) {
   position: relative;
+  overflow: hidden;
 }
 
 /* Sem cor solida: deixa o fundo cosmico do body aparecer por tras,
@@ -375,6 +380,30 @@ p { margin: 0 0 16px; color: var(--text-main); }
 .split-media { position: relative; display: flex; justify-content: center; }
 .split-media .lottie-box { max-width: 360px; height: 360px; }
 .split-lottie { width: 100%; height: 100%; display: block; }
+
+/* Portal decorativo atras do video/imagem: pseudo-elemento no container
+   (nao no .media-frame, que tem overflow:hidden e cortaria o portal).
+   Precisa ser bem maior que o proprio frame, senao fica escondido atras
+   dele (o frame e opaco e cobre o centro, so a borda do portal aparece).
+   O overflow:hidden da .section (pai) contem esse elemento dentro dos
+   limites da secao, entao ele nunca vaza pra secao vizinha. */
+.split-media::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160%;
+  max-width: 720px;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background-image: url('../assets/videos/Rick%20And%20Morty%20Emoji%20Sticker%20by%20Adult%20Swim.gif');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
 
 .split-media > * {
   position: relative;
